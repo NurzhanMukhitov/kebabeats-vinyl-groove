@@ -4,10 +4,7 @@ const TrackInfo = ({ track }: { track: Track }) => {
   return (
     <div className="text-center px-8 mb-8">
       <h1 className="text-xl font-bold tracking-tight mb-1">{track.title}</h1>
-      <p className="text-primary text-sm font-medium mb-2">{track.artist}</p>
-      <p className="text-muted-foreground text-[11px] flex items-center justify-center gap-1">
-        {track.venue}, {track.date}
-      </p>
+      <p className="text-primary text-sm font-medium">{track.artist}</p>
     </div>
   );
 };
