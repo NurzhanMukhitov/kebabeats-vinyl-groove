@@ -34,7 +34,7 @@ const PlayerControls = ({
 
         <button
           onClick={onTogglePlay}
-          className="w-[76px] h-[76px] rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center shadow-[0_0_30px_hsl(var(--primary)/0.3)] active:scale-95 transition-transform"
+          className="w-[76px] h-[76px] rounded-full bg-primary flex items-center justify-center shadow-[0_0_30px_hsl(var(--primary)/0.15)] active:scale-95 transition-transform"
           style={{ transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)' }}
         >
           {isPlaying ? (
