@@ -20,22 +20,50 @@ export const useAudioPlayer = (tracks: Track[]) => {
   const [shuffleEnabled, setShuffleEnabled] = useState(false);
   const [repeatEnabled, setRepeatEnabled] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const shuffleEnabledRef = useRef(shuffleEnabled);
+  const repeatEnabledRef = useRef(repeatEnabled);
+  const currentTrackIndexRef = useRef(currentTrackIndex);
 
-  const currentTrack = tracks[currentTrackIndex];
+  useEffect(() => {
+    shuffleEnabledRef.current = shuffleEnabled;
+  }, [shuffleEnabled]);
+
+  useEffect(() => {
+    repeatEnabledRef.current = repeatEnabled;
+  }, [repeatEnabled]);
+
+  useEffect(() => {
+    currentTrackIndexRef.current = currentTrackIndex;
+  }, [currentTrackIndex]);
+
+  const currentTrack =
+    tracks[currentTrackIndex] ?? {
+      id: "",
+      title: "",
+      artist: "",
+      venue: "",
+      date: "",
+      duration: "",
+      durationSeconds: 0,
+      audioUrl: "",
+      coverUrl: "",
+    };
 
   const nextTrack = useCallback(() => {
+    if (tracks.length === 0) return;
     if (shuffleEnabled) {
       let next: number;
       do {
         next = Math.floor(Math.random() * tracks.length);
-      } while (next === currentTrackIndex && tracks.length > 1);
+      } while (next === currentTrackIndexRef.current && tracks.length > 1);
       setCurrentTrackIndex(next);
     } else {
       setCurrentTrackIndex((prev) => (prev + 1) % tracks.length);
     }
-  }, [shuffleEnabled, currentTrackIndex, tracks.length]);
+  }, [shuffleEnabled, tracks.length]);
 
   const prevTrack = useCallback(() => {
+    if (tracks.length === 0) return;
     if (audioRef.current && audioRef.current.currentTime > 3) {
       audioRef.current.currentTime = 0;
       setProgress(0);
@@ -45,6 +73,13 @@ export const useAudioPlayer = (tracks: Track[]) => {
   }, [tracks.length]);
 
   useEffect(() => {
+    if (tracks.length === 0 || !currentTrack.audioUrl) {
+      setIsPlaying(false);
+      setProgress(0);
+      setDuration(0);
+      return;
+    }
+
     if (!audioRef.current) {
       audioRef.current = new Audio();
     }
@@ -55,11 +90,20 @@ export const useAudioPlayer = (tracks: Track[]) => {
     const updateProgress = () => setProgress(audio.currentTime);
     const updateDuration = () => setDuration(audio.duration || currentTrack.durationSeconds);
     const handleEnd = () => {
-      if (repeatEnabled) {
+      if (repeatEnabledRef.current) {
         audio.currentTime = 0;
         audio.play();
       } else {
-        nextTrack();
+        if (tracks.length === 0) return;
+        if (shuffleEnabledRef.current && tracks.length > 1) {
+          let next: number;
+          do {
+            next = Math.floor(Math.random() * tracks.length);
+          } while (next === currentTrackIndexRef.current);
+          setCurrentTrackIndex(next);
+        } else {
+          setCurrentTrackIndex((prev) => (prev + 1) % tracks.length);
+        }
       }
     };
 
@@ -80,7 +124,7 @@ export const useAudioPlayer = (tracks: Track[]) => {
       audio.removeEventListener('ended', handleEnd);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentTrackIndex]);
+  }, [currentTrackIndex, tracks.length]);
 
   const togglePlay = useCallback(() => {
     const audio = audioRef.current;
@@ -102,9 +146,11 @@ export const useAudioPlayer = (tracks: Track[]) => {
   }, []);
 
   const selectTrack = useCallback((index: number) => {
+    if (tracks.length === 0) return;
+    if (index < 0 || index >= tracks.length) return;
     setCurrentTrackIndex(index);
     setIsPlaying(true);
-  }, []);
+  }, [tracks.length]);
 
   return {
     currentTrack,

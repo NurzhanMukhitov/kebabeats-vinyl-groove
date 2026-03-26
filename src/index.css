@@ -75,4 +75,8 @@
     background: hsl(var(--border));
     border-radius: 10px;
   }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
