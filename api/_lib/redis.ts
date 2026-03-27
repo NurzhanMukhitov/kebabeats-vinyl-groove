@@ -1,8 +1,14 @@
-import { createClient, type RedisClientType } from "redis";
+type RedisLike = {
+  isOpen: boolean;
+  connect: () => Promise<void>;
+  on: (event: "error", listener: (error: unknown) => void) => void;
+  hGetAll: (key: string) => Promise<Record<string, string>>;
+  hIncrBy: (key: string, field: string, increment: number) => Promise<number>;
+};
 
 declare global {
   // Reuse Redis client between invocations in dev/serverless warm runtime.
-  var __kebabeatsRedisClient__: RedisClientType | undefined;
+  var __kebabeatsRedisClient__: RedisLike | undefined;
 }
 
 let connectPromise: Promise<void> | null = null;
@@ -14,7 +20,14 @@ export async function getRedisClient() {
   let client = globalThis.__kebabeatsRedisClient__;
   if (!client) {
     try {
-      client = createClient({
+      const redisModule = (await import("redis")) as {
+        createClient: (opts: {
+          url: string;
+          socket: { reconnectStrategy: (retries: number) => number };
+        }) => RedisLike;
+      };
+
+      client = redisModule.createClient({
         url: redisUrl,
         socket: {
           reconnectStrategy: (retries) => Math.min(retries * 100, 1000),
