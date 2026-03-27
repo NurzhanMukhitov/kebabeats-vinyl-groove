@@ -5,9 +5,9 @@ interface VinylPlayerProps {
 
 const VinylPlayer = ({ isPlaying, slipmatImage }: VinylPlayerProps) => {
   return (
-    <div className="relative flex items-center justify-center py-8">
+    <div className="relative flex items-center justify-center py-1 md:py-2">
       <div
-        className={`relative w-[260px] h-[260px] rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center justify-center overflow-hidden animate-spin-vinyl`}
+        className={`relative w-[170px] h-[170px] md:w-[200px] md:h-[200px] rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.8)] flex items-center justify-center overflow-hidden animate-spin-vinyl`}
         style={{
           animationPlayState: isPlaying ? 'running' : 'paused',
         }}
@@ -32,7 +32,7 @@ const VinylPlayer = ({ isPlaying, slipmatImage }: VinylPlayerProps) => {
         />
 
         {/* Spindle hole in center */}
-        <div className="absolute inset-0 m-auto w-4 h-4 bg-background rounded-full shadow-inner z-20" />
+        <div className="absolute inset-0 m-auto w-3 h-3 md:w-4 md:h-4 bg-background rounded-full shadow-inner z-20" />
 
         {/* Sheen overlay */}
         <div

@@ -36,7 +36,8 @@ const CrewCarousel = ({ crew }: CrewCarouselProps) => {
           type="button"
           aria-label="Previous DJ"
           onClick={() => scrollToCard("prev")}
-          className="hidden md:flex items-center justify-center fixed left-5 top-1/2 -translate-y-1/2 z-20 h-12 w-12 rounded-full bg-white/10 border border-white/20 text-white/90 hover:bg-white/20 transition-opacity opacity-0 group-hover:opacity-100"
+          className="hidden md:flex items-center justify-center absolute top-1/2 -translate-y-1/2 z-20 h-12 w-12 rounded-full bg-white/10 border border-white/20 text-white/90 hover:bg-white/20 transition-opacity duration-300 ease-out opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
+          style={{ left: "8px" }}
         >
           <ChevronLeft size={22} />
         </button>
@@ -44,7 +45,8 @@ const CrewCarousel = ({ crew }: CrewCarouselProps) => {
           type="button"
           aria-label="Next DJ"
           onClick={() => scrollToCard("next")}
-          className="hidden md:flex items-center justify-center fixed right-5 top-1/2 -translate-y-1/2 z-20 h-12 w-12 rounded-full bg-white/10 border border-white/20 text-white/90 hover:bg-white/20 transition-opacity opacity-0 group-hover:opacity-100"
+          className="hidden md:flex items-center justify-center absolute top-1/2 -translate-y-1/2 z-20 h-12 w-12 rounded-full bg-white/10 border border-white/20 text-white/90 hover:bg-white/20 transition-opacity duration-300 ease-out opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto"
+          style={{ right: "8px" }}
         >
           <ChevronRight size={22} />
         </button>
@@ -61,9 +63,9 @@ const CrewCarousel = ({ crew }: CrewCarouselProps) => {
             scrollBehavior: "smooth",
             width: "100%",
             alignItems: "center",
-            gap: 16,
-            paddingLeft: 16,
-            paddingRight: 16,
+            gap: 0,
+            paddingLeft: 0,
+            paddingRight: 0,
           }}
           className="hide-scrollbar select-none"
         >
@@ -84,13 +86,15 @@ const CrewCarousel = ({ crew }: CrewCarouselProps) => {
                   flexShrink: 0,
                   width: "100%",
                 }}
-                className="flex justify-center px-2"
+                className="flex justify-center"
               >
                 <div
-                  className="w-full max-w-[320px] md:max-w-[400px] rounded-3xl border border-white/10 bg-white/[0.03] px-8 py-8 text-center flex flex-col"
-                  style={{ maxHeight: "calc(100svh - 240px)" }}
+                  className="w-full max-w-[340px] md:max-w-[450px] rounded-3xl border border-white/10 bg-white/[0.03] px-5 md:px-8 py-5 md:py-8 text-center flex flex-col"
+                  style={{
+                    maxHeight: "min(500px, calc(100vh - 180px))",
+                  }}
                 >
-                  <div className="mx-auto mb-6 h-40 w-40 md:h-[180px] md:w-[180px] rounded-full border-2 border-white/25 bg-white/5 p-1 relative">
+                  <div className="mx-auto mb-6 h-[180px] w-[180px] md:h-[200px] md:w-[200px] rounded-full border-2 border-white/25 bg-white/5 p-1 relative">
                     {brokenImageIds[member.id] ? (
                       <div className="h-full w-full rounded-full bg-gradient-to-br from-primary/60 to-primary-dark/60 flex items-center justify-center text-2xl font-bold tracking-wider text-white">
                         {getInitials(member.name)}
@@ -108,9 +112,11 @@ const CrewCarousel = ({ crew }: CrewCarouselProps) => {
                   <p className="text-xl font-bold uppercase tracking-widest text-white">{member.name}</p>
 
                   <div
-                    className="mt-4 max-h-[120px] overflow-y-auto custom-scrollbar text-sm text-muted-foreground text-center px-4 leading-relaxed"
+                    className="mt-4 max-h-[150px] overflow-y-auto custom-scrollbar px-4"
                   >
-                    {member.bio}
+                    <p className="text-sm md:text-base text-muted-foreground text-left leading-[1.6]">
+                      {member.bio}
+                    </p>
                   </div>
 
                   {instagramUrl ? (

@@ -12,11 +12,8 @@ interface PlaylistProps {
 
 const Playlist = ({ tracks, currentTrackId, favoritesSet, onToggleFavorite, onSelectTrack, playCounts }: PlaylistProps) => {
   return (
-    <section className="px-6 pb-24">
-      <div className="flex justify-between items-end mb-4">
-        <h2 className="text-[12px] font-bold tracking-widest text-muted-foreground uppercase">Playlist</h2>
-      </div>
-      <div className="space-y-3 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
+    <section className="px-4 h-full pb-0 flex flex-col">
+      <div className="space-y-0 flex-1 overflow-y-auto pr-1 custom-scrollbar pb-0">
         {tracks.map((track) => {
           const isActive = currentTrackId === track.id;
           const isFavorite = favoritesSet.has(track.id);
@@ -25,7 +22,7 @@ const Playlist = ({ tracks, currentTrackId, favoritesSet, onToggleFavorite, onSe
             <div
               key={track.id}
               onClick={() => onSelectTrack(track.id)}
-              className={`flex items-center gap-3 p-2 rounded-xl border transition-all cursor-pointer ${
+              className={`h-14 shrink-0 flex items-center gap-3 px-2 rounded-xl border transition-all cursor-pointer ${
                 isActive
                   ? 'border-primary bg-primary/10'
                   : 'border-border bg-card hover:bg-secondary'
@@ -33,7 +30,7 @@ const Playlist = ({ tracks, currentTrackId, favoritesSet, onToggleFavorite, onSe
             >
               <img
                 src={track.coverUrl}
-                className="w-12 h-12 rounded-[10px] object-cover bg-secondary"
+                className="w-11 h-11 md:w-12 md:h-12 rounded-[10px] object-cover bg-secondary"
                 alt={track.title}
                 onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
               />
@@ -49,7 +46,7 @@ const Playlist = ({ tracks, currentTrackId, favoritesSet, onToggleFavorite, onSe
                   e.stopPropagation();
                   onToggleFavorite(track.id);
                 }}
-                className={`shrink-0 inline-flex items-center justify-center p-2 rounded-full border transition-colors ${
+                className={`shrink-0 inline-flex items-center justify-center w-11 h-11 rounded-full border transition-colors ${
                   isFavorite
                     ? 'border-primary bg-primary/10 text-primary'
                     : 'border-border bg-card text-muted-foreground opacity-70 hover:opacity-100 hover:bg-secondary'

@@ -32,7 +32,7 @@ const BottomNav = ({ activeTab, onTabChange }: BottomNavProps) => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 max-w-[420px] mx-auto bg-background/90 backdrop-blur-xl border-t border-border px-6 py-4 flex justify-around items-center z-50">
+    <nav className="fixed bottom-0 left-0 right-0 max-w-[420px] mx-auto bg-background/90 backdrop-blur-xl border-t border-border px-6 py-3 flex justify-around items-center z-50">
       {tabs.map((tab) => (
         <NavItem
           key={tab.id}

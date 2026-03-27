@@ -16,45 +16,49 @@ const PlayerControls = ({
   onTogglePlay, onNext, onPrev, onToggleShuffle, onToggleRepeat,
 }: PlayerControlsProps) => {
   return (
-    <div className="flex items-center justify-between px-8 py-10">
+    <div className="flex items-center justify-center px-6 py-2">
       <button
         onClick={onToggleShuffle}
-        className={`transition-colors ${shuffleEnabled ? 'text-primary' : 'text-muted-foreground opacity-60 hover:opacity-100'}`}
+        className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+          shuffleEnabled ? 'text-primary' : 'text-muted-foreground opacity-60 hover:opacity-100'
+        }`}
       >
         <Shuffle size={20} />
       </button>
 
-      <div className="flex items-center gap-6">
-        <button
-          onClick={onPrev}
-          className="w-[52px] h-[52px] rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-all"
-        >
-          <SkipBack size={20} fill="currentColor" />
-        </button>
-
-        <button
-          onClick={onTogglePlay}
-          className="w-[76px] h-[76px] rounded-full bg-primary flex items-center justify-center shadow-[0_0_30px_hsl(var(--primary)/0.15)] active:scale-95 transition-transform"
-          style={{ transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)' }}
-        >
-          {isPlaying ? (
-            <Pause size={32} fill="hsl(var(--primary-foreground))" className="text-primary-foreground" />
-          ) : (
-            <Play size={32} fill="hsl(var(--primary-foreground))" className="ml-1 text-primary-foreground" />
-          )}
-        </button>
-
-        <button
-          onClick={onNext}
-          className="w-[52px] h-[52px] rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-all"
-        >
-          <SkipForward size={20} fill="currentColor" />
-        </button>
-      </div>
+      <div className="w-4" />
+      <button
+        onClick={onPrev}
+        className="w-11 h-11 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-all"
+      >
+        <SkipBack size={20} fill="currentColor" />
+      </button>
+      <div className="w-2" />
+      <button
+        onClick={onTogglePlay}
+        className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-primary flex items-center justify-center shadow-[0_0_30px_hsl(var(--primary)/0.15)] active:scale-95 transition-transform"
+        style={{ transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)' }}
+      >
+        {isPlaying ? (
+          <Pause size={28} fill="hsl(var(--primary-foreground))" className="text-primary-foreground" />
+        ) : (
+          <Play size={28} fill="hsl(var(--primary-foreground))" className="ml-1 text-primary-foreground" />
+        )}
+      </button>
+      <div className="w-2" />
+      <button
+        onClick={onNext}
+        className="w-11 h-11 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-all"
+      >
+        <SkipForward size={20} fill="currentColor" />
+      </button>
+      <div className="w-4" />
 
       <button
         onClick={onToggleRepeat}
-        className={`transition-colors ${repeatEnabled ? 'text-primary' : 'text-muted-foreground opacity-60 hover:opacity-100'}`}
+        className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+          repeatEnabled ? 'text-primary' : 'text-muted-foreground opacity-60 hover:opacity-100'
+        }`}
       >
         <Repeat size={20} />
       </button>

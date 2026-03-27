@@ -51,7 +51,7 @@ const AudioProgressBar = ({ current, total, onSeek }: AudioProgressBarProps) => 
   };
 
   return (
-    <div className="w-full px-6 space-y-2">
+    <div className="w-full px-6 space-y-0.5">
       <div
         className="relative min-h-[44px] flex items-center touch-none group"
         style={{ touchAction: "none" }}
