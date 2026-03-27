@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 const PLAY_COUNTS_STORAGE_KEY = "kebabeats:playCounts";
+const PLAY_COUNTS_API_URL = "/api/play-counts";
 
 type PlayCounts = Record<string, number>;
 
@@ -23,9 +24,41 @@ function safeParsePlayCounts(raw: string | null): PlayCounts {
 
 export function usePlayCounts() {
   const [playCounts, setPlayCounts] = useState<PlayCounts>({});
+  const apiAvailableRef = useRef<boolean | null>(null);
 
   useEffect(() => {
-    setPlayCounts(safeParsePlayCounts(localStorage.getItem(PLAY_COUNTS_STORAGE_KEY)));
+    let cancelled = false;
+
+    const loadCounts = async () => {
+      try {
+        const response = await fetch(PLAY_COUNTS_API_URL, { cache: "no-store" });
+        if (!response.ok) throw new Error(`GET ${PLAY_COUNTS_API_URL} failed`);
+
+        const payload = (await response.json()) as { playCounts?: unknown };
+        const normalized = safeParsePlayCounts(
+          payload && typeof payload === "object" ? JSON.stringify(payload.playCounts ?? {}) : null
+        );
+
+        if (!cancelled) {
+          setPlayCounts(normalized);
+          apiAvailableRef.current = true;
+        }
+        return;
+      } catch {
+        // Local dev and unavailable API should still work using local fallback.
+        apiAvailableRef.current = false;
+      }
+
+      if (!cancelled) {
+        setPlayCounts(safeParsePlayCounts(localStorage.getItem(PLAY_COUNTS_STORAGE_KEY)));
+      }
+    };
+
+    void loadCounts();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -36,11 +69,32 @@ export function usePlayCounts() {
 
   const incrementPlayCount = useCallback((trackId: string) => {
     if (!trackId) return;
+
     setPlayCounts((prev) => {
       const next = { ...prev };
       next[trackId] = (next[trackId] ?? 0) + 1;
       return next;
     });
+
+    const syncIncrement = async () => {
+      // If the API was already detected as unavailable, avoid retrying every play.
+      if (apiAvailableRef.current === false) return;
+
+      try {
+        const response = await fetch(`${PLAY_COUNTS_API_URL}/increment`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ trackId }),
+          keepalive: true,
+        });
+        if (!response.ok) throw new Error(`POST ${PLAY_COUNTS_API_URL}/increment failed`);
+        apiAvailableRef.current = true;
+      } catch {
+        apiAvailableRef.current = false;
+      }
+    };
+
+    void syncIncrement();
   }, []);
 
   const mostPlayed = useMemo(() => {

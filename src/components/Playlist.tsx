@@ -7,17 +7,15 @@ interface PlaylistProps {
   favoritesSet: Set<string>;
   onToggleFavorite: (trackId: string) => void;
   onSelectTrack: (trackId: string) => void;
-  playCounts: Record<string, number>;
 }
 
-const Playlist = ({ tracks, currentTrackId, favoritesSet, onToggleFavorite, onSelectTrack, playCounts }: PlaylistProps) => {
+const Playlist = ({ tracks, currentTrackId, favoritesSet, onToggleFavorite, onSelectTrack }: PlaylistProps) => {
   return (
     <section className="px-4 h-full pb-0 flex flex-col">
       <div className="space-y-0 flex-1 overflow-y-auto pr-1 custom-scrollbar pb-0">
         {tracks.map((track) => {
           const isActive = currentTrackId === track.id;
           const isFavorite = favoritesSet.has(track.id);
-          const plays = playCounts[track.id] ?? 0;
           return (
             <div
               key={track.id}
@@ -61,11 +59,6 @@ const Playlist = ({ tracks, currentTrackId, favoritesSet, onToggleFavorite, onSe
               </button>
               <div className="flex flex-col items-end gap-1 shrink-0">
                 <span className="text-[10px] font-mono text-muted-foreground">{track.duration}</span>
-                {plays > 0 ? (
-                  <span className="text-[9px] font-bold text-muted-foreground bg-muted/40 px-2 py-0.5 rounded-full font-mono">
-                    {plays}x
-                  </span>
-                ) : null}
               </div>
             </div>
           );
