@@ -1,6 +1,6 @@
 type RedisLike = {
   isOpen: boolean;
-  connect: () => Promise<void>;
+  connect: () => Promise<unknown>;
   on: (event: "error", listener: (error: unknown) => void) => void;
   hGetAll: (key: string) => Promise<Record<string, string>>;
   hIncrBy: (key: string, field: string, increment: number) => Promise<number>;
@@ -11,7 +11,7 @@ declare global {
   var __kebabeatsRedisClient__: RedisLike | undefined;
 }
 
-let connectPromise: Promise<void> | null = null;
+let connectPromise: Promise<unknown> | null = null;
 
 export async function getRedisClient() {
   const redisUrl = process.env.REDIS_URL;
@@ -45,7 +45,7 @@ export async function getRedisClient() {
 
   if (!client.isOpen) {
     try {
-      connectPromise ??= client.connect().then(() => undefined);
+      connectPromise ??= client.connect();
       await connectPromise;
     } catch {
       connectPromise = null;

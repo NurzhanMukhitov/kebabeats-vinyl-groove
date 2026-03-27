@@ -1,4 +1,4 @@
-import { getRedisClient } from "../_lib/redis";
+import { getRedisClient } from "../_lib/redis.js";
 
 const PLAY_COUNTS_KEY = "kebabeats:playCounts";
 
