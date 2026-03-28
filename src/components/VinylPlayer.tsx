@@ -1,9 +1,23 @@
 interface VinylPlayerProps {
   isPlaying: boolean;
   slipmatImage?: string;
+  /** Station / brand logo in the center (e.g. radio); uses dark disc if no slipmatImage */
+  centerLogoSrc?: string;
 }
 
-const VinylPlayer = ({ isPlaying, slipmatImage }: VinylPlayerProps) => {
+const VinylPlayer = ({ isPlaying, slipmatImage, centerLogoSrc }: VinylPlayerProps) => {
+  const discBase = slipmatImage ? (
+    <img
+      src={slipmatImage}
+      className="absolute inset-0 w-full h-full object-cover rounded-full"
+      alt="Slipmat"
+    />
+  ) : centerLogoSrc ? (
+    <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-zinc-900 via-black to-zinc-950 rounded-full" />
+  ) : (
+    <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-primary to-primary-dark rounded-full" />
+  );
+
   return (
     <div className="relative flex items-center justify-center py-1 md:py-2">
       <div
@@ -12,18 +26,19 @@ const VinylPlayer = ({ isPlaying, slipmatImage }: VinylPlayerProps) => {
           animationPlayState: isPlaying ? 'running' : 'paused',
         }}
       >
-        {/* Mascot image - full disc background */}
-        {slipmatImage ? (
-          <img
-            src={slipmatImage}
-            className="absolute inset-0 w-full h-full object-cover rounded-full"
-            alt="Slipmat"
-          />
-        ) : (
-          <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-primary to-primary-dark rounded-full" />
-        )}
+        {discBase}
 
-        {/* Vinyl grooves overlay on top of image */}
+        {centerLogoSrc ? (
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none px-8 py-8">
+            <img
+              src={centerLogoSrc}
+              alt=""
+              className="max-w-[78%] max-h-[78%] w-auto h-auto object-contain opacity-[0.95]"
+            />
+          </div>
+        ) : null}
+
+        {/* Vinyl grooves overlay on top of label / slipmat */}
         <div
           className="absolute inset-0 rounded-full pointer-events-none"
           style={{

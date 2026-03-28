@@ -126,6 +126,13 @@ export const useAudioPlayer = (tracks: Track[]) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTrackIndex, tracks.length]);
 
+  const pause = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.pause();
+    setIsPlaying(false);
+  }, []);
+
   const togglePlay = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -161,6 +168,7 @@ export const useAudioPlayer = (tracks: Track[]) => {
     shuffleEnabled,
     repeatEnabled,
     togglePlay,
+    pause,
     nextTrack,
     prevTrack,
     seek,

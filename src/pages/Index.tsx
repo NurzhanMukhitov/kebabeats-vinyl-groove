@@ -1,24 +1,26 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import VinylPlayer from '@/components/VinylPlayer';
 import TrackInfo from '@/components/TrackInfo';
 import AudioProgressBar from '@/components/AudioProgressBar';
 import PlayerControls from '@/components/PlayerControls';
 import Playlist from '@/components/Playlist';
-import BottomNav, { type BottomTab } from '@/components/BottomNav';
+import BottomNav from '@/components/BottomNav';
 import CrewCarousel from '@/components/CrewCarousel';
 import MiniPlayer from '@/components/MiniPlayer';
+import RadioSection from '@/components/RadioSection';
 import { useAudioPlayer } from '@/hooks/useAudioPlayer';
 import { useTracks } from '@/hooks/useTracks';
 import { SLIPMAT_IMAGE } from '@/data/tracks';
 import { useFavorites } from '@/hooks/useFavorites';
 import { usePlayCounts } from '@/hooks/usePlayCounts';
 import { useCrew } from '@/hooks/useCrew';
+import { usePersistentBottomTab } from '@/hooks/usePersistentBottomTab';
 
 const Index = () => {
   const { tracks, isLoading } = useTracks();
   const player = useAudioPlayer(tracks);
   const { favoritesSet, toggleFavorite } = useFavorites();
-  const [activeTab, setActiveTab] = useState<BottomTab>("mixes");
+  const { activeTab, setActiveTab } = usePersistentBottomTab();
   const { playCounts, incrementPlayCount, playCountsHydrated } = usePlayCounts();
   const { crew, isLoading: isCrewLoading, error: crewError } = useCrew();
   const currentTrackForMini = player.currentTrack.id ? player.currentTrack : null;
@@ -59,6 +61,12 @@ const Index = () => {
     lastTrackIndexRef.current = player.currentTrackIndex;
   }, [player.currentTrack.id, player.currentTrackIndex, player.isPlaying, incrementPlayCount]);
 
+  useEffect(() => {
+    if (activeTab === "radio") {
+      player.pause();
+    }
+  }, [activeTab, player.pause]);
+
   const handleSelectTrack = (trackId: string) => {
     const idx = tracks.findIndex((t) => t.id === trackId);
     if (idx >= 0) player.selectTrack(idx);
@@ -87,6 +95,8 @@ const Index = () => {
             <CrewCarousel crew={crew} />
           </div>
         )
+      ) : activeTab === "radio" ? (
+        <RadioSection />
       ) : (
         <>
           {/* Main Player */}
