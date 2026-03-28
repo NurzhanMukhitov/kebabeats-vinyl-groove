@@ -24,6 +24,8 @@ function safeParsePlayCounts(raw: string | null): PlayCounts {
 
 export function usePlayCounts() {
   const [playCounts, setPlayCounts] = useState<PlayCounts>({});
+  /** True after first load from API or localStorage fallback — needed so playlist can sort with real counts. */
+  const [playCountsHydrated, setPlayCountsHydrated] = useState(false);
   const apiAvailableRef = useRef<boolean | null>(null);
 
   useEffect(() => {
@@ -43,14 +45,16 @@ export function usePlayCounts() {
           setPlayCounts(normalized);
           apiAvailableRef.current = true;
         }
-        return;
       } catch {
         // Local dev and unavailable API should still work using local fallback.
         apiAvailableRef.current = false;
-      }
-
-      if (!cancelled) {
-        setPlayCounts(safeParsePlayCounts(localStorage.getItem(PLAY_COUNTS_STORAGE_KEY)));
+        if (!cancelled) {
+          setPlayCounts(safeParsePlayCounts(localStorage.getItem(PLAY_COUNTS_STORAGE_KEY)));
+        }
+      } finally {
+        if (!cancelled) {
+          setPlayCountsHydrated(true);
+        }
       }
     };
 
@@ -109,6 +113,6 @@ export function usePlayCounts() {
     return bestId ? { trackId: bestId, count: bestCount } : null;
   }, [playCounts]);
 
-  return { playCounts, getPlayCount, incrementPlayCount, mostPlayed };
+  return { playCounts, getPlayCount, incrementPlayCount, mostPlayed, playCountsHydrated };
 }
 

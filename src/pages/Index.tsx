@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import VinylPlayer from '@/components/VinylPlayer';
 import TrackInfo from '@/components/TrackInfo';
 import AudioProgressBar from '@/components/AudioProgressBar';
@@ -19,7 +19,7 @@ const Index = () => {
   const player = useAudioPlayer(tracks);
   const { favoritesSet, toggleFavorite } = useFavorites();
   const [activeTab, setActiveTab] = useState<BottomTab>("mixes");
-  const { playCounts, incrementPlayCount } = usePlayCounts();
+  const { playCounts, incrementPlayCount, playCountsHydrated } = usePlayCounts();
   const { crew, isLoading: isCrewLoading, error: crewError } = useCrew();
   const currentTrackForMini = player.currentTrack.id ? player.currentTrack : null;
   // MiniPlayer should stay visible even when paused (track selected + CREW tab).
@@ -27,9 +27,18 @@ const Index = () => {
 
   const lastIsPlayingRef = useRef(false);
   const lastTrackIndexRef = useRef(player.currentTrackIndex);
-  const previousTabRef = useRef<BottomTab>(activeTab);
-  const snapshotInitializedRef = useRef(false);
-  const [snapshotSortedTracks, setSnapshotSortedTracks] = useState(tracks);
+  /** Tracks for playlist: by play count (desc), then stable original order. Updates when counts load or change. */
+  const playlistTracks = useMemo(() => {
+    if (tracks.length === 0) return tracks;
+    if (!playCountsHydrated) return tracks;
+
+    return [...tracks].sort((a, b) => {
+      const ac = playCounts[a.id] ?? 0;
+      const bc = playCounts[b.id] ?? 0;
+      if (bc !== ac) return bc - ac;
+      return tracks.indexOf(a) - tracks.indexOf(b);
+    });
+  }, [tracks, playCounts, playCountsHydrated]);
 
   useEffect(() => {
     const trackId = player.currentTrack.id;
@@ -49,28 +58,6 @@ const Index = () => {
     lastIsPlayingRef.current = true;
     lastTrackIndexRef.current = player.currentTrackIndex;
   }, [player.currentTrack.id, player.currentTrackIndex, player.isPlaying, incrementPlayCount]);
-
-  useEffect(() => {
-    const sortedByPlays = [...tracks].sort((a, b) => {
-      const bCount = playCounts[b.id] ?? 0;
-      const aCount = playCounts[a.id] ?? 0;
-      if (bCount !== aCount) return bCount - aCount;
-      return 0;
-    });
-
-    const shouldSnapshot =
-      activeTab === "mixes" &&
-      (!snapshotInitializedRef.current ||
-        previousTabRef.current !== "mixes" ||
-        (snapshotSortedTracks.length === 0 && sortedByPlays.length > 0));
-
-    if (shouldSnapshot) {
-      setSnapshotSortedTracks(sortedByPlays);
-      snapshotInitializedRef.current = true;
-    }
-
-    previousTabRef.current = activeTab;
-  }, [activeTab, tracks, playCounts, snapshotSortedTracks.length]);
 
   const handleSelectTrack = (trackId: string) => {
     const idx = tracks.findIndex((t) => t.id === trackId);
@@ -143,7 +130,7 @@ const Index = () => {
             <div className="flex-1 overflow-hidden">
               {isLoading || tracks.length === 0 ? null : (
                 <Playlist
-                  tracks={snapshotSortedTracks}
+                  tracks={playlistTracks}
                   currentTrackId={player.currentTrack.id}
                   favoritesSet={favoritesSet}
                   onToggleFavorite={toggleFavorite}
