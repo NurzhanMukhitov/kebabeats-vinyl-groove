@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import VinylPlayer from '@/components/VinylPlayer';
 import TrackInfo from '@/components/TrackInfo';
 import AudioProgressBar from '@/components/AudioProgressBar';
@@ -15,6 +15,8 @@ import { useFavorites } from '@/hooks/useFavorites';
 import { usePlayCounts } from '@/hooks/usePlayCounts';
 import { useCrew } from '@/hooks/useCrew';
 import { usePersistentBottomTab } from '@/hooks/usePersistentBottomTab';
+import { useRadioStream } from "@/hooks/useRadioStream";
+import { RADIO_STATIONS } from "@/data/radioStations";
 
 const Index = () => {
   const { tracks, isLoading } = useTracks();
@@ -24,8 +26,6 @@ const Index = () => {
   const { playCounts, incrementPlayCount, playCountsHydrated } = usePlayCounts();
   const { crew, isLoading: isCrewLoading, error: crewError } = useCrew();
   const currentTrackForMini = player.currentTrack.id ? player.currentTrack : null;
-  // MiniPlayer should stay visible even when paused (track selected + CREW tab).
-  const showMiniPlayer = activeTab === "crew" && !!currentTrackForMini;
 
   const lastIsPlayingRef = useRef(false);
   const lastTrackIndexRef = useRef(player.currentTrackIndex);
@@ -61,11 +61,48 @@ const Index = () => {
     lastTrackIndexRef.current = player.currentTrackIndex;
   }, [player.currentTrack.id, player.currentTrackIndex, player.isPlaying, incrementPlayCount]);
 
-  useEffect(() => {
+  // Сразу при переключении на Radio глушим микс (до отрисовки), иначе оба источника могут играть.
+  useLayoutEffect(() => {
     if (activeTab === "radio") {
       player.pause();
     }
   }, [activeTab, player.pause]);
+
+  // --- Radio: глобальный стрим, который не умирает при переключении на Crew ---
+  const [activeStationId, setActiveStationId] = useState(RADIO_STATIONS[0].id);
+  const activeStation = useMemo(
+    () => RADIO_STATIONS.find((s) => s.id === activeStationId) ?? RADIO_STATIONS[0],
+    [activeStationId],
+  );
+
+  const {
+    isPlaying: isRadioPlaying,
+    nowPlaying: radioNowPlaying,
+    toggle: toggleRadio,
+    play: playRadio,
+    pause: pauseRadio,
+  } = useRadioStream(activeStation.streamUrl, activeStation.curtrackUrl);
+
+  /** На Crew: мини-плеер — микс (если радио не играет) или радио (если эфир идёт в фоне). */
+  const showMixMiniOnCrew = activeTab === "crew" && !!currentTrackForMini && !isRadioPlaying;
+  const showRadioMiniOnCrew = activeTab === "crew" && isRadioPlaying;
+
+  // При возвращении к миксам останавливаем радио, как сейчас миксы останавливаются при входе в Radio.
+  useEffect(() => {
+    if (activeTab === "mixes") {
+      pauseRadio();
+    }
+  }, [activeTab, pauseRadio]);
+
+  const radioTrackForMini = useMemo(
+    () => ({
+      id: `radio-${activeStation.id}`,
+      title: radioNowPlaying?.title || activeStation.name,
+      artist: radioNowPlaying?.artist || activeStation.tagline,
+      audioUrl: activeStation.streamUrl,
+    }),
+    [activeStation, radioNowPlaying],
+  );
 
   const handleSelectTrack = (trackId: string) => {
     const idx = tracks.findIndex((t) => t.id === trackId);
@@ -94,12 +131,19 @@ const Index = () => {
             <p className="text-[12px] text-muted-foreground text-center">Crew info coming soon</p>
           </section>
         ) : (
-          <div className={showMiniPlayer ? "pt-3 md:pt-0 pb-[140px]" : "pt-3 md:pt-0 pb-[80px]"}>
+          <div className={showMixMiniOnCrew || showRadioMiniOnCrew ? "pt-3 md:pt-0 pb-[140px]" : "pt-3 md:pt-0 pb-[80px]"}>
             <CrewCarousel crew={crew} />
           </div>
         )
       ) : activeTab === "radio" ? (
-        <RadioSection />
+        <RadioSection
+          activeStationId={activeStationId}
+          onChangeStation={setActiveStationId}
+          isPlaying={isRadioPlaying}
+          nowPlaying={radioNowPlaying}
+          toggle={toggleRadio}
+          play={playRadio}
+        />
       ) : (
         <>
           {/* Main Player */}
@@ -155,12 +199,20 @@ const Index = () => {
         </>
       )}
 
-      {showMiniPlayer ? (
+      {showMixMiniOnCrew ? (
         <MiniPlayer
           currentTrack={currentTrackForMini}
           isPlaying={player.isPlaying}
           onPlayPause={player.togglePlay}
           onExpand={() => setActiveTab("mixes")}
+        />
+      ) : showRadioMiniOnCrew ? (
+        <MiniPlayer
+          currentTrack={radioTrackForMini}
+          isPlaying={isRadioPlaying}
+          onPlayPause={toggleRadio}
+          onExpand={() => setActiveTab("radio")}
+          artworkUrl={activeStation.logoUrl}
         />
       ) : null}
 

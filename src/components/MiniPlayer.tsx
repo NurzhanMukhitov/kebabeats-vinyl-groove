@@ -12,10 +12,14 @@ interface MiniPlayerProps {
   isPlaying: boolean;
   onPlayPause: () => void;
   onExpand: () => void;
+  /** Обложка (радио — логотип станции); по умолчанию маскот. */
+  artworkUrl?: string;
 }
 
-const MiniPlayer = ({ currentTrack, isPlaying, onPlayPause, onExpand }: MiniPlayerProps) => {
+const MiniPlayer = ({ currentTrack, isPlaying, onPlayPause, onExpand, artworkUrl }: MiniPlayerProps) => {
   if (!currentTrack) return null;
+
+  const art = artworkUrl ?? "/mascot.png";
 
   return (
     <div className="fixed bottom-[70px] left-0 right-0 z-40 px-4">
@@ -24,7 +28,7 @@ const MiniPlayer = ({ currentTrack, isPlaying, onPlayPause, onExpand }: MiniPlay
         onClick={onExpand}
       >
         <div className="w-11 h-11 rounded-md bg-zinc-800 flex-shrink-0 overflow-hidden">
-          <img src="/mascot.png" alt="" className="w-full h-full object-cover" />
+          <img src={art} alt="" className="w-full h-full object-cover" />
         </div>
 
         <div className="flex-1 min-w-0">
