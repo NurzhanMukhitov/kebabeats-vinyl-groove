@@ -1,3 +1,8 @@
+import somafmBeatBlender from "@/assets/radio/somafm-beat-blender.png";
+import somafmDeepSpaceOne from "@/assets/radio/somafm-deep-space-one.gif";
+import somafmFluid from "@/assets/radio/somafm-fluid.jpg";
+import somafmGrooveSalad from "@/assets/radio/somafm-groove-salad.png";
+
 /** Curated live streams — add stations here. */
 export interface RadioStation {
   id: string;
@@ -7,7 +12,7 @@ export interface RadioStation {
   streamUrl: string;
   /** Optional JSON for “now playing” (Radio Meuh format) */
   curtrackUrl: string | null;
-  /** Brand mark for vinyl + list row (public path) */
+  /** Логотип: путь из `/public` или URL после import (Vite). */
   logoUrl: string;
   /** Light / dark: монохромные логотипы. Cover: цветная картинка на весь тайл (SomaFM и т.п.). */
   logoBackdrop?: "light" | "dark" | "cover";
@@ -59,7 +64,7 @@ export const RADIO_STATIONS: RadioStation[] = [
     tagline: "SomaFM • deep-house & downtempo",
     streamUrl: "https://ice3.somafm.com/beatblender-128-mp3",
     curtrackUrl: null,
-    logoUrl: "/icons/somafm-beat-blender.png",
+    logoUrl: somafmBeatBlender,
     logoBackdrop: "cover",
   },
   {
@@ -68,7 +73,7 @@ export const RADIO_STATIONS: RadioStation[] = [
     tagline: "SomaFM • instrumental hiphop & future soul",
     streamUrl: "https://ice2.somafm.com/fluid-128-mp3",
     curtrackUrl: null,
-    logoUrl: "/icons/somafm-fluid.jpg",
+    logoUrl: somafmFluid,
     logoBackdrop: "cover",
   },
   {
@@ -77,7 +82,7 @@ export const RADIO_STATIONS: RadioStation[] = [
     tagline: "SomaFM • ambient / downtempo",
     streamUrl: "https://ice3.somafm.com/groovesalad-128-mp3",
     curtrackUrl: null,
-    logoUrl: "/icons/somafm-groove-salad.png",
+    logoUrl: somafmGrooveSalad,
     logoBackdrop: "cover",
   },
   {
@@ -86,7 +91,7 @@ export const RADIO_STATIONS: RadioStation[] = [
     tagline: "SomaFM • ambient & space",
     streamUrl: "https://ice4.somafm.com/deepspaceone-128-mp3",
     curtrackUrl: null,
-    logoUrl: "/icons/somafm-deep-space-one.gif",
+    logoUrl: somafmDeepSpaceOne,
     logoBackdrop: "cover",
   },
 ];
