@@ -1,11 +1,10 @@
 import { Pause, Play } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import TrackInfo from "@/components/TrackInfo";
 import VinylPlayer from "@/components/VinylPlayer";
 import { SLIPMAT_IMAGE } from "@/data/tracks";
 import { RADIO_STATIONS, type RadioStation } from "@/data/radioStations";
 import type { Track } from "@/hooks/useAudioPlayer";
-import { useRadioStream } from "@/hooks/useRadioStream";
 import type { RadioNowPlaying } from "@/hooks/useRadioStream";
 
 /** Станция: только брендовый логотип (без обложек из эфира). */
@@ -78,8 +77,25 @@ const StationRow = ({
   );
 };
 
-const RadioSection = () => {
-  const [activeStationId, setActiveStationId] = useState(RADIO_STATIONS[0].id);
+interface RadioSectionProps {
+  activeStationId: string;
+  onChangeStation: (id: string) => void;
+  isPlaying: boolean;
+  nowPlaying: RadioNowPlaying | null;
+  /** Toggle play/pause for the currently active station. */
+  toggle: () => void;
+  /** Play helper used for small delayed autoplay when switching stations. */
+  play: () => void;
+}
+
+const RadioSection = ({
+  activeStationId,
+  onChangeStation,
+  isPlaying,
+  nowPlaying,
+  toggle,
+  play,
+}: RadioSectionProps) => {
   const pendingAutoplay = useRef(false);
 
   const activeStation = useMemo(
@@ -87,17 +103,12 @@ const RadioSection = () => {
     [activeStationId],
   );
 
-  const { isPlaying, nowPlaying, toggle, play } = useRadioStream(
-    activeStation.streamUrl,
-    activeStation.curtrackUrl,
-  );
-
   useEffect(() => {
     if (!pendingAutoplay.current) return;
     pendingAutoplay.current = false;
     const id = window.setTimeout(() => play(), 120);
     return () => window.clearTimeout(id);
-  }, [activeStationId, activeStation.streamUrl, play]);
+  }, [activeStationId, play]);
 
   const radioTrack: Track = useMemo(
     () => ({
@@ -119,7 +130,7 @@ const RadioSection = () => {
       toggle();
     } else {
       pendingAutoplay.current = true;
-      setActiveStationId(station.id);
+      onChangeStation(station.id);
     }
   };
 
