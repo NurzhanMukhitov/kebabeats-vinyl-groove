@@ -3,6 +3,7 @@ import somafmDeepSpaceOne from "@/assets/radio/somafm-deep-space-one.gif";
 import somafmFluid from "@/assets/radio/somafm-fluid.jpg";
 import somafmGrooveSalad from "@/assets/radio/somafm-groove-salad.png";
 import wefunkLogo from "@/assets/radio/wefunk-logo.png";
+import fipLogo from "@/assets/radio/fip-seosquare.png";
 
 /** Curated live streams — add stations here. */
 export interface RadioStation {
@@ -39,6 +40,16 @@ export const RADIO_STATIONS: RadioStation[] = [
     curtrackUrl: null,
     logoUrl: "/icons/nts.png",
     logoBackdrop: "dark",
+  },
+  {
+    id: "fip",
+    name: "FIP",
+    tagline: "Paris • éclectique / jazz, soul, world",
+    /** Icecast MP3 (~128k); HLS: stream.radiofrance.fr/.../fip_hifi.m3u8 — для <audio> не нужен. */
+    streamUrl: "https://icecast.radiofrance.fr/fip-midfi.mp3?id=radiofrance",
+    curtrackUrl: null,
+    logoUrl: fipLogo,
+    logoBackdrop: "cover",
   },
   {
     id: "ibiza-global-radio",
