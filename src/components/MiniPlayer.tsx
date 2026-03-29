@@ -14,12 +14,51 @@ interface MiniPlayerProps {
   onExpand: () => void;
   /** Обложка (радио — логотип станции); по умолчанию маскот. */
   artworkUrl?: string;
+  /** Как в RadioSection: light = тёмный логотип на белом фоне, иначе на тёмном мини-плеере «пропадает». */
+  artworkBackdrop?: "light" | "dark" | "cover";
 }
 
-const MiniPlayer = ({ currentTrack, isPlaying, onPlayPause, onExpand, artworkUrl }: MiniPlayerProps) => {
+const MiniPlayer = ({
+  currentTrack,
+  isPlaying,
+  onPlayPause,
+  onExpand,
+  artworkUrl,
+  artworkBackdrop = "cover",
+}: MiniPlayerProps) => {
   if (!currentTrack) return null;
 
   const art = artworkUrl ?? "/mascot.png";
+  const isRadioArt = !!artworkUrl;
+
+  const artworkSlot = (() => {
+    if (!isRadioArt) {
+      return (
+        <div className="w-11 h-11 rounded-md bg-zinc-800 flex-shrink-0 overflow-hidden">
+          <img src={art} alt="" className="w-full h-full object-cover" />
+        </div>
+      );
+    }
+    if (artworkBackdrop === "light") {
+      return (
+        <div className="w-11 h-11 rounded-md bg-white flex items-center justify-center p-1 shadow-sm flex-shrink-0 overflow-hidden border border-zinc-700">
+          <img src={art} alt="" className="max-w-full max-h-full object-contain" />
+        </div>
+      );
+    }
+    if (artworkBackdrop === "dark") {
+      return (
+        <div className="w-11 h-11 rounded-md bg-black flex items-center justify-center p-1.5 shadow-sm flex-shrink-0 overflow-hidden border border-zinc-700">
+          <img src={art} alt="" className="max-w-full max-h-full object-contain" />
+        </div>
+      );
+    }
+    return (
+      <div className="w-11 h-11 rounded-md bg-zinc-800 flex-shrink-0 overflow-hidden">
+        <img src={art} alt="" className="w-full h-full object-cover" />
+      </div>
+    );
+  })();
 
   return (
     <div className="fixed bottom-[70px] left-0 right-0 z-40 px-4">
@@ -27,9 +66,7 @@ const MiniPlayer = ({ currentTrack, isPlaying, onPlayPause, onExpand, artworkUrl
         className="mx-auto max-w-[420px] bg-zinc-900/95 backdrop-blur-sm border-t border-zinc-800 px-4 py-3 flex items-center gap-3 cursor-pointer rounded-t-lg"
         onClick={onExpand}
       >
-        <div className="w-11 h-11 rounded-md bg-zinc-800 flex-shrink-0 overflow-hidden">
-          <img src={art} alt="" className="w-full h-full object-cover" />
-        </div>
+        {artworkSlot}
 
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-white truncate">{currentTrack.title}</p>

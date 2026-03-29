@@ -213,6 +213,7 @@ const Index = () => {
           onPlayPause={toggleRadio}
           onExpand={() => setActiveTab("radio")}
           artworkUrl={activeStation.logoUrl}
+          artworkBackdrop={activeStation.logoBackdrop ?? "cover"}
         />
       ) : null}
 
