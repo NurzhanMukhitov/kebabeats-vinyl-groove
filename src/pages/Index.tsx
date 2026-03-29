@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import VinylPlayer from '@/components/VinylPlayer';
 import TrackInfo from '@/components/TrackInfo';
 import AudioProgressBar from '@/components/AudioProgressBar';
@@ -61,13 +61,6 @@ const Index = () => {
     lastTrackIndexRef.current = player.currentTrackIndex;
   }, [player.currentTrack.id, player.currentTrackIndex, player.isPlaying, incrementPlayCount]);
 
-  // Сразу при переключении на Radio глушим микс (до отрисовки), иначе оба источника могут играть.
-  useLayoutEffect(() => {
-    if (activeTab === "radio") {
-      player.pause();
-    }
-  }, [activeTab, player.pause]);
-
   // --- Radio: глобальный стрим, который не умирает при переключении на Crew ---
   const [activeStationId, setActiveStationId] = useState(RADIO_STATIONS[0].id);
   const activeStation = useMemo(
@@ -82,6 +75,13 @@ const Index = () => {
     play: playRadio,
     pause: pauseRadio,
   } = useRadioStream(activeStation.streamUrl, activeStation.curtrackUrl);
+
+  // Микс глушим только когда реально включили эфир, а не при простом переходе на вкладку Radio.
+  useEffect(() => {
+    if (isRadioPlaying) {
+      player.pause();
+    }
+  }, [isRadioPlaying, player.pause]);
 
   /** На Crew: мини-плеер — микс (если радио не играет) или радио (если эфир идёт в фоне). */
   const showMixMiniOnCrew = activeTab === "crew" && !!currentTrackForMini && !isRadioPlaying;
