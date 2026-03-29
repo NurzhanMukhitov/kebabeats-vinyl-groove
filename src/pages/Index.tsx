@@ -74,8 +74,11 @@ const Index = () => {
 
   return (
     <div className="min-h-svh bg-background text-foreground flex flex-col max-w-[420px] mx-auto overflow-hidden">
-      {/* Header */}
-      <header className="pt-4 pb-1 text-center">
+      {/* Header — env(safe-area-inset-top): вырез / Dynamic Island / статус-бар при viewport-fit=cover */}
+      <header
+        className="pb-1 text-center"
+        style={{ paddingTop: "calc(1rem + env(safe-area-inset-top, 0px))" }}
+      >
         <p className="text-[11px] tracking-[0.2em] text-muted-foreground font-bold uppercase">
           Vinyl Lovers • Party Makers
         </p>

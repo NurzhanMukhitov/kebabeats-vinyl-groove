@@ -33,7 +33,10 @@ const BottomNav = ({ activeTab, onTabChange }: BottomNavProps) => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 max-w-[420px] mx-auto bg-background/90 backdrop-blur-xl border-t border-border px-4 py-3 flex justify-around items-center z-50 gap-1">
+    <nav
+      className="fixed bottom-0 left-0 right-0 max-w-[420px] mx-auto bg-background/90 backdrop-blur-xl border-t border-border px-4 pt-3 flex justify-around items-center z-50 gap-1"
+      style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom, 0px))" }}
+    >
       {tabs.map((tab) => {
         const active = activeTab === tab.id;
         return (
