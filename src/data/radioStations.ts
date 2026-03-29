@@ -2,6 +2,7 @@ import somafmBeatBlender from "@/assets/radio/somafm-beat-blender.png";
 import somafmDeepSpaceOne from "@/assets/radio/somafm-deep-space-one.gif";
 import somafmFluid from "@/assets/radio/somafm-fluid.jpg";
 import somafmGrooveSalad from "@/assets/radio/somafm-groove-salad.png";
+import wefunkLogo from "@/assets/radio/wefunk-logo.png";
 
 /** Curated live streams — add stations here. */
 export interface RadioStation {
@@ -92,6 +93,15 @@ export const RADIO_STATIONS: RadioStation[] = [
     streamUrl: "https://ice4.somafm.com/deepspaceone-128-mp3",
     curtrackUrl: null,
     logoUrl: somafmDeepSpaceOne,
+    logoBackdrop: "cover",
+  },
+  {
+    id: "wefunk",
+    name: "WEFUNK Radio",
+    tagline: "Funk • hip-hop • soul • underground classics",
+    streamUrl: "https://s-09.wefunkradio.com:8443/wefunk64.mp3",
+    curtrackUrl: null,
+    logoUrl: wefunkLogo,
     logoBackdrop: "cover",
   },
 ];
