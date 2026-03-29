@@ -34,4 +34,23 @@ export const RADIO_STATIONS: RadioStation[] = [
     logoUrl: "/icons/nts.png",
     logoBackdrop: "dark",
   },
+  {
+    id: "ibiza-global-radio",
+    name: "Ibiza Global Radio",
+    tagline: "Electronic • Ibiza",
+    /** CDN Icecast; control.streaming-pro.com/.../ibizaglobalradio.mp3 сейчас отдаёт 404. */
+    streamUrl: "https://cdn-peer022.streaming-pro.com:8025/ibizaglobalradio.mp3",
+    curtrackUrl: null,
+    logoUrl: "/icons/logo-igr-black-new.svg",
+    logoBackdrop: "light",
+  },
+  {
+    id: "ibiza-global-classics",
+    name: "Ibiza Global Classics",
+    tagline: "Classics • Ibiza",
+    streamUrl: "https://control.streaming-pro.com:8000/ibizaglobalclassics.mp3",
+    curtrackUrl: null,
+    logoUrl: "/icons/logo-igr-black-new.svg",
+    logoBackdrop: "light",
+  },
 ];
