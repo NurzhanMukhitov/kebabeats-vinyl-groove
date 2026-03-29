@@ -14,10 +14,12 @@ const RadioStationArt = ({
   logoBackdrop = "light",
 }: {
   logoUrl: string;
-  logoBackdrop?: "light" | "dark";
+  logoBackdrop?: "light" | "dark" | "cover";
 }) => (
   <div className="w-11 h-11 md:w-12 md:h-12 rounded-[10px] bg-secondary border border-border flex items-center justify-center overflow-hidden shrink-0">
-    {logoBackdrop === "dark" ? (
+    {logoBackdrop === "cover" ? (
+      <img src={logoUrl} alt="" className="w-full h-full object-cover" />
+    ) : logoBackdrop === "dark" ? (
       <div className="w-[88%] h-[88%] rounded-lg bg-black flex items-center justify-center p-1.5 shadow-sm">
         <img src={logoUrl} alt="" className="max-w-full max-h-full object-contain" />
       </div>

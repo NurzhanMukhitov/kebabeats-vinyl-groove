@@ -9,8 +9,8 @@ export interface RadioStation {
   curtrackUrl: string | null;
   /** Brand mark for vinyl + list row (public path) */
   logoUrl: string;
-  /** Light: белая подложка под тёмный логотип. Dark: тёмная под светлый (например NTS). */
-  logoBackdrop?: "light" | "dark";
+  /** Light / dark: монохромные логотипы. Cover: цветная картинка на весь тайл (SomaFM и т.п.). */
+  logoBackdrop?: "light" | "dark" | "cover";
 }
 
 export const RADIO_STATIONS: RadioStation[] = [
@@ -52,5 +52,41 @@ export const RADIO_STATIONS: RadioStation[] = [
     curtrackUrl: null,
     logoUrl: "/icons/logo-igr-black-new.svg",
     logoBackdrop: "light",
+  },
+  {
+    id: "somafm-beat-blender",
+    name: "Beat Blender",
+    tagline: "SomaFM • deep-house & downtempo",
+    streamUrl: "https://ice3.somafm.com/beatblender-128-mp3",
+    curtrackUrl: null,
+    logoUrl: "/icons/somafm-beat-blender.png",
+    logoBackdrop: "cover",
+  },
+  {
+    id: "somafm-fluid",
+    name: "Fluid",
+    tagline: "SomaFM • instrumental hiphop & future soul",
+    streamUrl: "https://ice2.somafm.com/fluid-128-mp3",
+    curtrackUrl: null,
+    logoUrl: "/icons/somafm-fluid.jpg",
+    logoBackdrop: "cover",
+  },
+  {
+    id: "somafm-groove-salad",
+    name: "Groove Salad",
+    tagline: "SomaFM • ambient / downtempo",
+    streamUrl: "https://ice3.somafm.com/groovesalad-128-mp3",
+    curtrackUrl: null,
+    logoUrl: "/icons/somafm-groove-salad.png",
+    logoBackdrop: "cover",
+  },
+  {
+    id: "somafm-deep-space-one",
+    name: "Deep Space One",
+    tagline: "SomaFM • ambient & space",
+    streamUrl: "https://ice4.somafm.com/deepspaceone-128-mp3",
+    curtrackUrl: null,
+    logoUrl: "/icons/somafm-deep-space-one.gif",
+    logoBackdrop: "cover",
   },
 ];

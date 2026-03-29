@@ -83,6 +83,7 @@ public/
 - **Radio Meuh:** прямой Icecast MP3 (Infomaniak), метаданные — `curtrack.json` на сайте станции.
 - **NTS:** MP3-реле `stream-relay-geo.ntslive.net` (без HLS в браузере).
 - **Ibiza Global Radio / Classics:** Icecast MP3 (`cdn-peer022…` для основного канала, `control.streaming-pro.com` для Classics); логотип `logo-igr-black-new.svg`, без отдельного now-playing API в приложении.
+- **SomaFM** (Beat Blender, Fluid, Groove Salad, Deep Space One): разные хосты `ice*.somafm.com`, суффикс потока `-128-mp3`; иконки в `public/icons/somafm-*`, режим отображения `logoBackdrop: cover`.
 - Винил на Radio использует **тот же слипмат**, что и Mixes (`SLIPMAT_IMAGE`).
 - Обложки треков из эфира в списке **не показываются** — только брендовые логотипы с подложкой (`logoBackdrop`: светлая для тёмного логотипа, тёмная для светлого на чёрном, напр. NTS).
 - Вкладка **Radio** ставит миксы на паузу через **`pause()`** из `useAudioPlayer`.
@@ -155,4 +156,4 @@ npm test         # Vitest
 
 ---
 
-*Последнее обновление документа: Radio (Meuh, NTS, Ibiza Global + Classics), persistent tab, Redis play-counts.*
+*Последнее обновление документа: Radio (+ SomaFM), persistent tab, Redis play-counts.*
