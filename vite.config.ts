@@ -62,6 +62,7 @@ export default defineConfig(() => ({
       },
       workbox: {
         navigateFallback: "index.html",
+        navigateFallbackDenylist: [/^\/api\//],
         globPatterns: ["**/*.{js,css,html,ico,png,svg,jpg,jpeg,gif,webp,woff2}"],
         // Радио-потоки (Icecast и т.д.) не в precache и не описаны в runtimeCaching — остаются только сеть.
         runtimeCaching: [],

@@ -24,7 +24,7 @@
 | Слой | Технология |
 |------|------------|
 | UI | React 18, TypeScript |
-| Сборка | Vite 8 |
+| Сборка | Vite 7 |
 | Стили | Tailwind CSS, shadcn/ui (Radix), `tailwindcss-animate` |
 | Маршрутизация | `react-router-dom` (главная `/`, остальное — 404) |
 | Данные (клиент) | `@tanstack/react-query` (обёртка в `App`), локальные хуки |
@@ -123,6 +123,8 @@ public/
 
 - Типичный сценарий: **Vercel** (корень проекта, `api/` как serverless).
 - Переменные для Redis/KV — по документации провайдера (см. `api/_lib/redis.ts`).
+- **PWA (Workbox):** `navigateFallback: "index.html"` для SPA. Обязательно **`navigateFallbackDenylist: [/^\/api\//]`** в `vite.config.ts` — иначе навигационные запросы к `/api/*` в установленном PWA подменялись бы на `index.html`, и serverless (`/api/play-counts` и т.д.) не вызывались бы.
+- **Vercel Web Analytics:** пакет `@vercel/analytics`, компонент `<Analytics />` в `App.tsx` — визиты на дашборде Vercel (обезличенно).
 
 ---
 
@@ -155,7 +157,8 @@ npm test         # Vitest
 
 - Счётчики раньше «залипали» из-за снимка плейлиста до загрузки `playCounts` — исправлено через `playCountsHydrated` и `useMemo` по счётчикам.
 - Радио с двумя независимыми `Audio` давало рассинхрон с винилом — введён один активный `activeStationId` и один `useRadioStream`.
+- PWA: без `navigateFallbackDenylist` для `/api/` счётчики в установленном приложении «ломались» (отдавалась SPA вместо API).
 
 ---
 
-*Последнее обновление документа: Radio (+ SomaFM), persistent tab, Redis play-counts.*
+*Последнее обновление документа: Vite 7, Vercel Analytics, PWA API denylist, Redis play-counts.*
