@@ -60,8 +60,14 @@ const MiniPlayer = ({
     );
   })();
 
+  /** Над нижней навигацией: высота таб-бара + safe-area (как в BottomNav), иначе плеер заезжает под табы на iPhone. */
   return (
-    <div className="fixed bottom-[70px] left-0 right-0 z-40 px-4">
+    <div
+      className="fixed left-0 right-0 z-40 px-4"
+      style={{
+        bottom: "calc(3.875rem + env(safe-area-inset-bottom, 0px))",
+      }}
+    >
       <div
         className="mx-auto max-w-[420px] bg-zinc-900/95 backdrop-blur-sm border-t border-zinc-800 px-4 py-3 flex items-center gap-3 cursor-pointer rounded-t-lg"
         onClick={onExpand}

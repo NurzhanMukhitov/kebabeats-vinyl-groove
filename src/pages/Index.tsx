@@ -73,7 +73,6 @@ const Index = () => {
     nowPlaying: radioNowPlaying,
     toggle: toggleRadio,
     play: playRadio,
-    pause: pauseRadio,
   } = useRadioStream(activeStation.streamUrl, activeStation.curtrackUrl);
 
   // Микс глушим только когда реально включили эфир, а не при простом переходе на вкладку Radio.
@@ -83,16 +82,10 @@ const Index = () => {
     }
   }, [isRadioPlaying, player.pause]);
 
-  /** На Crew: мини-плеер — микс (если радио не играет) или радио (если эфир идёт в фоне). */
+  /** Мини-плеер: микс на Crew; радио на Crew или Mixes, пока эфир играет. */
   const showMixMiniOnCrew = activeTab === "crew" && !!currentTrackForMini && !isRadioPlaying;
-  const showRadioMiniOnCrew = activeTab === "crew" && isRadioPlaying;
-
-  // При возвращении к миксам останавливаем радио, как сейчас миксы останавливаются при входе в Radio.
-  useEffect(() => {
-    if (activeTab === "mixes") {
-      pauseRadio();
-    }
-  }, [activeTab, pauseRadio]);
+  const showRadioMini =
+    isRadioPlaying && (activeTab === "crew" || activeTab === "mixes");
 
   const radioTrackForMini = useMemo(
     () => ({
@@ -131,7 +124,7 @@ const Index = () => {
             <p className="text-[12px] text-muted-foreground text-center">Crew info coming soon</p>
           </section>
         ) : (
-          <div className={showMixMiniOnCrew || showRadioMiniOnCrew ? "pt-3 md:pt-0 pb-[140px]" : "pt-3 md:pt-0 pb-[80px]"}>
+          <div className={showMixMiniOnCrew || showRadioMini ? "pt-3 md:pt-0 pb-[140px]" : "pt-3 md:pt-0 pb-[80px]"}>
             <CrewCarousel crew={crew} />
           </div>
         )
@@ -149,7 +142,11 @@ const Index = () => {
           {/* Main Player */}
           <div
             className="flex flex-1 flex-col overflow-hidden"
-            style={{ paddingBottom: "calc(72px + env(safe-area-inset-bottom))" }}
+            style={{
+              paddingBottom: showRadioMini
+                ? "calc(140px + env(safe-area-inset-bottom, 0px))"
+                : "calc(72px + env(safe-area-inset-bottom, 0px))",
+            }}
           >
             <div className="flex-shrink-0">
               <main className="flex flex-col items-center justify-start">
@@ -206,7 +203,7 @@ const Index = () => {
           onPlayPause={player.togglePlay}
           onExpand={() => setActiveTab("mixes")}
         />
-      ) : showRadioMiniOnCrew ? (
+      ) : showRadioMini ? (
         <MiniPlayer
           currentTrack={radioTrackForMini}
           isPlaying={isRadioPlaying}
