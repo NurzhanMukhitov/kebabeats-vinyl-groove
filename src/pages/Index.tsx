@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import VinylPlayer from '@/components/VinylPlayer';
 import TrackInfo from '@/components/TrackInfo';
 import AudioProgressBar from '@/components/AudioProgressBar';
@@ -102,6 +102,15 @@ const Index = () => {
     if (idx >= 0) player.selectTrack(idx);
   };
 
+  const handleMixTogglePlay = useCallback(() => {
+    if (isRadioPlaying) {
+      toggleRadio();
+      player.togglePlay();
+    } else {
+      player.togglePlay();
+    }
+  }, [isRadioPlaying, toggleRadio, player.togglePlay]);
+
   return (
     <div className="min-h-svh bg-background text-foreground flex flex-col max-w-[420px] mx-auto overflow-hidden">
       {/* Header — env(safe-area-inset-top): вырез / Dynamic Island / статус-бар при viewport-fit=cover */}
@@ -170,7 +179,7 @@ const Index = () => {
                       isPlaying={player.isPlaying}
                       shuffleEnabled={player.shuffleEnabled}
                       repeatEnabled={player.repeatEnabled}
-                      onTogglePlay={player.togglePlay}
+                      onTogglePlay={handleMixTogglePlay}
                       onNext={player.nextTrack}
                       onPrev={player.prevTrack}
                       onToggleShuffle={player.toggleShuffle}
