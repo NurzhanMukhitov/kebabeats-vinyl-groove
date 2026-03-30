@@ -99,7 +99,12 @@ const Index = () => {
 
   const handleSelectTrack = (trackId: string) => {
     const idx = tracks.findIndex((t) => t.id === trackId);
-    if (idx >= 0) player.selectTrack(idx);
+    if (idx < 0) return;
+    // Если в фоне играет радио, сначала его глушим, чтобы не было одновременного воспроизведения.
+    if (isRadioPlaying) {
+      toggleRadio();
+    }
+    player.selectTrack(idx);
   };
 
   const handleMixTogglePlay = useCallback(() => {
