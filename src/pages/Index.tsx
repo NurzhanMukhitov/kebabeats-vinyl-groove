@@ -5,7 +5,7 @@ import AudioProgressBar from '@/components/AudioProgressBar';
 import PlayerControls from '@/components/PlayerControls';
 import Playlist from '@/components/Playlist';
 import BottomNav from '@/components/BottomNav';
-import CrewCarousel from '@/components/CrewCarousel';
+import PosterGallery from '@/components/PosterGallery';
 import MiniPlayer from '@/components/MiniPlayer';
 import RadioSection from '@/components/RadioSection';
 import { useAudioPlayer } from '@/hooks/useAudioPlayer';
@@ -13,7 +13,6 @@ import { useTracks } from '@/hooks/useTracks';
 import { SLIPMAT_IMAGE } from '@/data/tracks';
 import { useFavorites } from '@/hooks/useFavorites';
 import { usePlayCounts } from '@/hooks/usePlayCounts';
-import { useCrew } from '@/hooks/useCrew';
 import { usePersistentBottomTab } from '@/hooks/usePersistentBottomTab';
 import { useRadioStream } from "@/hooks/useRadioStream";
 import { RADIO_STATIONS } from "@/data/radioStations";
@@ -24,7 +23,6 @@ const Index = () => {
   const { favoritesSet, toggleFavorite } = useFavorites();
   const { activeTab, setActiveTab } = usePersistentBottomTab();
   const { playCounts, incrementPlayCount, playCountsHydrated } = usePlayCounts();
-  const { crew, isLoading: isCrewLoading, error: crewError } = useCrew();
   const currentTrackForMini = player.currentTrack.id ? player.currentTrack : null;
 
   const lastIsPlayingRef = useRef(false);
@@ -129,19 +127,9 @@ const Index = () => {
       </header>
 
       {activeTab === "crew" ? (
-        isCrewLoading ? (
-          <section className="flex-1 flex items-center justify-center px-6 pb-24">
-            <p className="text-[12px] text-muted-foreground text-center">Loading crew...</p>
-          </section>
-        ) : crewError || crew.length === 0 ? (
-          <section className="flex-1 flex items-center justify-center px-6 pb-24">
-            <p className="text-[12px] text-muted-foreground text-center">Crew info coming soon</p>
-          </section>
-        ) : (
-          <div className={showMixMiniOnCrew || showRadioMini ? "pt-3 md:pt-0 pb-[140px]" : "pt-3 md:pt-0 pb-[80px]"}>
-            <CrewCarousel crew={crew} />
-          </div>
-        )
+        <div className={showMixMiniOnCrew || showRadioMini ? "pt-3 md:pt-0 pb-[140px]" : "pt-3 md:pt-0 pb-[80px]"}>
+          <PosterGallery />
+        </div>
       ) : activeTab === "radio" ? (
         <RadioSection
           activeStationId={activeStationId}

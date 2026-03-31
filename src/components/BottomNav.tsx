@@ -1,4 +1,4 @@
-import { Music, Radio, Users } from 'lucide-react';
+import { Images, Music, Radio } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 interface NavItemProps {
@@ -28,7 +28,7 @@ interface BottomNavProps {
 const BottomNav = ({ activeTab, onTabChange }: BottomNavProps) => {
   const tabs: Array<{ id: BottomTab; icon: ReactNode; label: string }> = [
     { id: "mixes", icon: <Music size={24} />, label: "Mixes" },
-    { id: "crew", icon: <Users size={24} />, label: "Crew" },
+    { id: "crew", icon: <Images size={24} />, label: "Gallery" },
     { id: "radio", icon: <Radio size={24} strokeWidth={1.75} />, label: "Radio" },
   ];
 
