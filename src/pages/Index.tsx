@@ -24,21 +24,37 @@ const Index = () => {
   const { activeTab, setActiveTab } = usePersistentBottomTab();
   const { playCounts, incrementPlayCount, playCountsHydrated } = usePlayCounts();
   const currentTrackForMini = player.currentTrack.id ? player.currentTrack : null;
+  const playlistScrollRef = useRef<HTMLDivElement | null>(null);
+  const [playlistOrderCounts, setPlaylistOrderCounts] = useState<Record<string, number> | null>(null);
 
   const lastIsPlayingRef = useRef(false);
   const lastTrackIndexRef = useRef(player.currentTrackIndex);
-  /** Tracks for playlist: by play count (desc), then stable original order. Updates when counts load or change. */
+  /**
+   * Freeze playlist ordering per session after hydration so list doesn't jump during playback.
+   * If first hydrated snapshot is temporarily empty, replace once with the first non-empty counts.
+   */
+  useEffect(() => {
+    if (!playCountsHydrated) return;
+    setPlaylistOrderCounts((prev) => {
+      if (prev === null) return playCounts;
+      if (Object.keys(prev).length === 0 && Object.keys(playCounts).length > 0) return playCounts;
+      return prev;
+    });
+  }, [playCountsHydrated, playCounts]);
+
+  /** Tracks for playlist: by frozen play-count snapshot (desc), then stable original order. */
   const playlistTracks = useMemo(() => {
     if (tracks.length === 0) return tracks;
     if (!playCountsHydrated) return tracks;
+    const countsForOrder = playlistOrderCounts ?? playCounts;
 
     return [...tracks].sort((a, b) => {
-      const ac = playCounts[a.id] ?? 0;
-      const bc = playCounts[b.id] ?? 0;
+      const ac = countsForOrder[a.id] ?? 0;
+      const bc = countsForOrder[b.id] ?? 0;
       if (bc !== ac) return bc - ac;
       return tracks.indexOf(a) - tracks.indexOf(b);
     });
-  }, [tracks, playCounts, playCountsHydrated]);
+  }, [tracks, playCountsHydrated, playCounts, playlistOrderCounts]);
 
   useEffect(() => {
     const trackId = player.currentTrack.id;
@@ -113,6 +129,14 @@ const Index = () => {
       player.togglePlay();
     }
   }, [isRadioPlaying, toggleRadio, player.togglePlay]);
+
+  const handleExpandToMixesTop = useCallback(() => {
+    setActiveTab("mixes");
+    window.requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      playlistScrollRef.current?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    });
+  }, [setActiveTab]);
 
   return (
     <div className="min-h-svh bg-background text-foreground flex flex-col max-w-[420px] mx-auto overflow-hidden">
@@ -191,6 +215,7 @@ const Index = () => {
                   favoritesSet={favoritesSet}
                   onToggleFavorite={toggleFavorite}
                   onSelectTrack={handleSelectTrack}
+                  scrollContainerRef={playlistScrollRef}
                 />
               )}
             </div>
@@ -203,7 +228,7 @@ const Index = () => {
           currentTrack={currentTrackForMini}
           isPlaying={player.isPlaying}
           onPlayPause={player.togglePlay}
-          onExpand={() => setActiveTab("mixes")}
+          onExpand={handleExpandToMixesTop}
         />
       ) : showRadioMini ? (
         <MiniPlayer

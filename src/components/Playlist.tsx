@@ -1,4 +1,5 @@
 import type { Track } from '@/hooks/useAudioPlayer';
+import type { RefObject } from "react";
 import { Heart } from 'lucide-react';
 
 interface PlaylistProps {
@@ -7,12 +8,13 @@ interface PlaylistProps {
   favoritesSet: Set<string>;
   onToggleFavorite: (trackId: string) => void;
   onSelectTrack: (trackId: string) => void;
+  scrollContainerRef?: RefObject<HTMLDivElement | null>;
 }
 
-const Playlist = ({ tracks, currentTrackId, favoritesSet, onToggleFavorite, onSelectTrack }: PlaylistProps) => {
+const Playlist = ({ tracks, currentTrackId, favoritesSet, onToggleFavorite, onSelectTrack, scrollContainerRef }: PlaylistProps) => {
   return (
     <section className="px-4 h-full pb-0 flex flex-col">
-      <div className="space-y-0 flex-1 overflow-y-auto pr-1 custom-scrollbar pb-0">
+      <div ref={scrollContainerRef} className="space-y-0 flex-1 overflow-y-auto pr-1 custom-scrollbar pb-0">
         {tracks.map((track) => {
           const isActive = currentTrackId === track.id;
           const isFavorite = favoritesSet.has(track.id);
