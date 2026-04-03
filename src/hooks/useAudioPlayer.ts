@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 
 export interface Track {
   id: string;
@@ -34,6 +34,11 @@ export const useAudioPlayer = (tracks: Track[]) => {
 
   useEffect(() => {
     currentTrackIndexRef.current = currentTrackIndex;
+  }, [currentTrackIndex]);
+
+  /** Сброс прогресса до paint при смене трека — иначе один кадр со старым progress даёт ложный порог 75%. */
+  useLayoutEffect(() => {
+    setProgress(0);
   }, [currentTrackIndex]);
 
   const currentTrack =

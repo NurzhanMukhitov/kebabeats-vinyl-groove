@@ -25,55 +25,51 @@ const Index = () => {
   const { playCounts, incrementPlayCount, playCountsHydrated } = usePlayCounts();
   const currentTrackForMini = player.currentTrack.id ? player.currentTrack : null;
   const playlistScrollRef = useRef<HTMLDivElement | null>(null);
-  const [playlistOrderCounts, setPlaylistOrderCounts] = useState<Record<string, number> | null>(null);
 
-  const lastIsPlayingRef = useRef(false);
-  const lastTrackIndexRef = useRef(player.currentTrackIndex);
   /**
-   * Freeze playlist ordering per session after hydration so list doesn't jump during playback.
-   * If first hydrated snapshot is temporarily empty, replace once with the first non-empty counts.
+   * Статистика: +1 только когда пользователь дослушал микс до 75% длительности (один раз за сессию трека).
+   * Рейтинг в плейлисте — по этим числам (больше прослушиваний выше в списке).
    */
-  useEffect(() => {
-    if (!playCountsHydrated) return;
-    setPlaylistOrderCounts((prev) => {
-      if (prev === null) return playCounts;
-      if (Object.keys(prev).length === 0 && Object.keys(playCounts).length > 0) return playCounts;
-      return prev;
-    });
-  }, [playCountsHydrated, playCounts]);
+  const counted75Ref = useRef(false);
 
-  /** Tracks for playlist: by frozen play-count snapshot (desc), then stable original order. */
+  /** Плейлист: по числу прослушиваний (убыв.), при равенстве — порядок в каталоге. */
   const playlistTracks = useMemo(() => {
     if (tracks.length === 0) return tracks;
     if (!playCountsHydrated) return tracks;
-    const countsForOrder = playlistOrderCounts ?? playCounts;
 
     return [...tracks].sort((a, b) => {
-      const ac = countsForOrder[a.id] ?? 0;
-      const bc = countsForOrder[b.id] ?? 0;
+      const ac = playCounts[a.id] ?? 0;
+      const bc = playCounts[b.id] ?? 0;
       if (bc !== ac) return bc - ac;
       return tracks.indexOf(a) - tracks.indexOf(b);
     });
-  }, [tracks, playCountsHydrated, playCounts, playlistOrderCounts]);
+  }, [tracks, playCountsHydrated, playCounts]);
+
+  useEffect(() => {
+    counted75Ref.current = false;
+  }, [player.currentTrack.id]);
 
   useEffect(() => {
     const trackId = player.currentTrack.id;
-    if (!trackId) return;
+    if (!trackId || counted75Ref.current) return;
 
-    if (!player.isPlaying) {
-      lastIsPlayingRef.current = false;
-      lastTrackIndexRef.current = player.currentTrackIndex;
-      return;
-    }
+    const dur =
+      player.duration > 0 && Number.isFinite(player.duration)
+        ? player.duration
+        : player.currentTrack.durationSeconds;
+    if (dur <= 0) return;
 
-    const shouldCount = !lastIsPlayingRef.current || player.currentTrackIndex !== lastTrackIndexRef.current;
-    if (shouldCount) {
+    if (player.progress >= dur * 0.75) {
+      counted75Ref.current = true;
       incrementPlayCount(trackId);
     }
-
-    lastIsPlayingRef.current = true;
-    lastTrackIndexRef.current = player.currentTrackIndex;
-  }, [player.currentTrack.id, player.currentTrackIndex, player.isPlaying, incrementPlayCount]);
+  }, [
+    player.currentTrack.id,
+    player.currentTrack.durationSeconds,
+    player.duration,
+    player.progress,
+    incrementPlayCount,
+  ]);
 
   // --- Radio: глобальный стрим, который не умирает при переключении на Crew ---
   const [activeStationId, setActiveStationId] = useState(RADIO_STATIONS[0].id);
