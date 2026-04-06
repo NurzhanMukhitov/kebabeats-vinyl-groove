@@ -4,6 +4,7 @@ import somafmFluid from "@/assets/radio/somafm-fluid.jpg";
 import somafmGrooveSalad from "@/assets/radio/somafm-groove-salad.png";
 import wefunkLogo from "@/assets/radio/wefunk-logo.png";
 import fipLogo from "@/assets/radio/fip-seosquare.png";
+import repeatHouseRadioLogo from "@/assets/radio/repeat-house-radio.png";
 
 /** Curated live streams — add stations here. */
 export interface RadioStation {
@@ -50,6 +51,15 @@ export const RADIO_STATIONS: RadioStation[] = [
     curtrackUrl: null,
     logoUrl: fipLogo,
     logoBackdrop: "cover",
+  },
+  {
+    id: "rhr707",
+    name: "Repeat House Radio",
+    tagline: "HR-707 • dance • 320 kbps",
+    streamUrl: "https://listen5.myradio24.com/tknva",
+    curtrackUrl: null,
+    logoUrl: repeatHouseRadioLogo,
+    logoBackdrop: "light",
   },
   {
     id: "ibiza-global-radio",
