@@ -62,6 +62,15 @@ export const RADIO_STATIONS: RadioStation[] = [
     logoBackdrop: "light",
   },
   {
+    id: "kurs-radio",
+    name: "KURS Radio",
+    tagline: "Mixx • house / club • 128 kbps",
+    streamUrl: "https://listen9.myradio24.com/kursradio",
+    curtrackUrl: null,
+    logoUrl: "/icons/kurs-radio.svg",
+    logoBackdrop: "light",
+  },
+  {
     id: "ibiza-global-radio",
     name: "Ibiza Global Radio",
     tagline: "Electronic • Ibiza",
