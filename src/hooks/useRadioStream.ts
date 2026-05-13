@@ -72,6 +72,7 @@ export function useRadioStream(streamUrl: string, curtrackUrl: string | null) {
       clearRetryTimer();
       toast.dismiss("radio-error");
       toast.dismiss("radio-stalled");
+      toast.dismiss("radio-offline");
     };
 
     const onPause = () => setIsPlaying(false);
@@ -119,6 +120,45 @@ export function useRadioStream(streamUrl: string, curtrackUrl: string | null) {
       audioRef.current = null;
     };
   }, [streamUrl]);
+
+  // Network awareness: keep the stream alive across temporary outages.
+  // If the user was listening before the drop, auto-resume when the browser regains connectivity.
+  useEffect(() => {
+    const onOnline = () => {
+      if (userPausedRef.current) return;
+      const audio = audioRef.current;
+      if (!audio) return;
+      retryCountRef.current = 0;
+      if (retryTimerRef.current !== null) {
+        clearTimeout(retryTimerRef.current);
+        retryTimerRef.current = null;
+      }
+      setIsError(false);
+      toast.dismiss("radio-offline");
+      toast.dismiss("radio-error");
+      audio.load();
+      void audio.play().catch(() => {});
+    };
+
+    const onOffline = () => {
+      if (userPausedRef.current) return;
+      if (retryTimerRef.current !== null) {
+        clearTimeout(retryTimerRef.current);
+        retryTimerRef.current = null;
+      }
+      toast.warning("Соединение потеряно", {
+        id: "radio-offline",
+        description: "Возобновим воспроизведение, когда сеть появится",
+      });
+    };
+
+    window.addEventListener("online", onOnline);
+    window.addEventListener("offline", onOffline);
+    return () => {
+      window.removeEventListener("online", onOnline);
+      window.removeEventListener("offline", onOffline);
+    };
+  }, []);
 
   useEffect(() => {
     if (!curtrackUrl) {

@@ -80,11 +80,14 @@ const MiniPlayer = ({
         </div>
 
         <button
+          type="button"
           onClick={(e) => {
             e.stopPropagation();
             onPlayPause();
           }}
-          className="w-11 h-11 flex items-center justify-center rounded-full bg-white text-black"
+          aria-label={isPlaying ? "Pause" : "Play"}
+          aria-pressed={isPlaying}
+          className="w-11 h-11 flex items-center justify-center rounded-full bg-white text-black focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
           {isPlaying ? <Pause size={20} fill="black" /> : <Play size={20} fill="black" />}
         </button>

@@ -59,6 +59,12 @@ const AudioProgressBar = ({ current, total, onSeek }: AudioProgressBarProps) => 
         {/* Touch/click target (44px+ tall) */}
         <div
           ref={hitRef}
+          role="slider"
+          aria-label="Seek"
+          aria-valuemin={0}
+          aria-valuemax={Math.max(0, Math.floor(total))}
+          aria-valuenow={Math.max(0, Math.floor(current))}
+          aria-valuetext={`${formatTime(current)} of ${formatTime(total)}`}
           className="w-full h-full cursor-pointer"
           onClick={(e) => seekFromClientX(e.clientX)}
           onTouchStart={handleTouchStart}
