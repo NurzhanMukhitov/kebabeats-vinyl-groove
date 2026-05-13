@@ -10,8 +10,11 @@ interface NavItemProps {
 
 const NavItem = ({ icon, label, active, onClick }: NavItemProps) => (
   <button
+    type="button"
     onClick={onClick}
-    className={`flex flex-col items-center gap-1 transition-colors ${active ? 'text-primary' : 'text-nav-muted'}`}
+    aria-current={active ? "page" : undefined}
+    aria-label={label}
+    className={`flex flex-col items-center gap-1 transition-colors rounded-md px-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${active ? 'text-primary' : 'text-nav-muted'}`}
   >
     {icon}
     <span className="text-[9px] font-medium uppercase tracking-tight">{label}</span>

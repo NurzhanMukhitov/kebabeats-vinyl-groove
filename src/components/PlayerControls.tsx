@@ -11,6 +11,9 @@ interface PlayerControlsProps {
   onToggleRepeat: () => void;
 }
 
+const focusRing =
+  "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background";
+
 const PlayerControls = ({
   isPlaying, shuffleEnabled, repeatEnabled,
   onTogglePlay, onNext, onPrev, onToggleShuffle, onToggleRepeat,
@@ -18,8 +21,11 @@ const PlayerControls = ({
   return (
     <div className="flex items-center justify-center px-6 py-2">
       <button
+        type="button"
         onClick={onToggleShuffle}
-        className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+        aria-label="Toggle shuffle"
+        aria-pressed={shuffleEnabled}
+        className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${focusRing} ${
           shuffleEnabled ? 'text-primary' : 'text-muted-foreground opacity-60 hover:opacity-100'
         }`}
       >
@@ -28,15 +34,20 @@ const PlayerControls = ({
 
       <div className="w-4" />
       <button
+        type="button"
         onClick={onPrev}
-        className="w-11 h-11 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-all"
+        aria-label="Previous track"
+        className={`w-11 h-11 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-all ${focusRing}`}
       >
         <SkipBack size={20} fill="currentColor" />
       </button>
       <div className="w-2" />
       <button
+        type="button"
         onClick={onTogglePlay}
-        className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-primary flex items-center justify-center shadow-[0_0_30px_hsl(var(--primary)/0.15)] active:scale-95 transition-transform"
+        aria-label={isPlaying ? "Pause" : "Play"}
+        aria-pressed={isPlaying}
+        className={`w-14 h-14 md:w-16 md:h-16 rounded-full bg-primary flex items-center justify-center shadow-[0_0_30px_hsl(var(--primary)/0.15)] active:scale-95 transition-transform ${focusRing}`}
         style={{ transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)' }}
       >
         {isPlaying ? (
@@ -47,16 +58,21 @@ const PlayerControls = ({
       </button>
       <div className="w-2" />
       <button
+        type="button"
         onClick={onNext}
-        className="w-11 h-11 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-all"
+        aria-label="Next track"
+        className={`w-11 h-11 rounded-full border border-border flex items-center justify-center hover:bg-secondary transition-all ${focusRing}`}
       >
         <SkipForward size={20} fill="currentColor" />
       </button>
       <div className="w-4" />
 
       <button
+        type="button"
         onClick={onToggleRepeat}
-        className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
+        aria-label="Toggle repeat"
+        aria-pressed={repeatEnabled}
+        className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors ${focusRing} ${
           repeatEnabled ? 'text-primary' : 'text-muted-foreground opacity-60 hover:opacity-100'
         }`}
       >
